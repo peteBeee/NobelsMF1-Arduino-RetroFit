@@ -11,7 +11,7 @@ Here I will document my findings along with circuit diagrams and arduino sketch 
 # Road Map
 1. Reuse existing foot switch circuitry with Arduino - **Committed - 26/02/2024**
 2. Wire up MIDI port and send signals to PC - **Committed - 26/02/2024**
-3. Have MIDI signals, *reliably*, interpreted by BOSS RC505
+3. Have MIDI signals, *reliably*, interpreted by BOSS RC505 - **Committed - 27/02/2024**
 4. 3D Model and print parts to install Aduino and ports in the existing case *with minimal case modification*
 5. Reuse original LED segment display board to show which switch has been pressed / CC sent
 6. Add software switch to switch between RC505 style signals and more standard signals
