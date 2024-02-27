@@ -16,3 +16,6 @@ Here I will document my findings along with circuit diagrams and arduino sketch 
 5. Reuse original LED segment display board to show which switch has been pressed / CC sent
 6. Add software switch to switch between RC505 style signals and more standard signals
 7. Add hardware switch to replace soft switch for 505/Standard signals
+
+# Hardware Choice
+https://store.arduino.cc/products/arduino-mega-2560-rev3
