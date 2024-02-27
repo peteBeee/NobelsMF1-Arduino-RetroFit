@@ -32,7 +32,7 @@ void loop() {
     ccNo = CCFromSwitch(switchNo, 1);
   }
 
-  if(ccNo == 0){
+  if(ccNo == 0 && lastCCSent != 0){
     //pedal released, send 0 to last CC
     MIDI.sendControlChange(lastCCSent, 0, 1);
     lastCCSent = 0;
