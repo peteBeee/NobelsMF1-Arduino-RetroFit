@@ -7,7 +7,7 @@ const int switchPins[2][6] = {
  {42,44,46,48,50,52}
 };
 
-volatile int lastButtonPressed;
+volatile int lastCCSent;
 
 void setup() {
   MIDI.begin(MIDI_CHANNEL_OFF);
@@ -33,15 +33,17 @@ void loop() {
   }
 
   if(ccNo == 0){
-    lastButtonPressed = 0;
+    //pedal released, send 0 to last CC
+    MIDI.sendControlChange(lastCCSent, 0, 1);
+    lastCCSent = 0;
   }
   else{
-    if(ccNo != lastButtonPressed){
-      sendCCForFootControl(ccNo, 1, 2);
-      lastButtonPressed = ccNo;
+    if(ccNo != lastCCSent){
+      //Send 127 to CC, initiating the pedal press
+      MIDI.sendControlChange(ccNo, 127, 1);
+      lastCCSent = ccNo;
     }
   }
-
 }
 
 void initSwitchPins(int row){
@@ -50,29 +52,6 @@ void initSwitchPins(int row){
    for(int i = 2; i<=6; i++){
      pinMode(switchPins[row - 1][i], OUTPUT);
    }
-}
-
-void sendCCForFootControl(int ccNo, int channel, int delayBetweenOnOff){
-  MIDI.sendControlChange(ccNo, 127, channel);
-  delay(delayBetweenOnOff);
-  MIDI.sendControlChange(ccNo, 127, channel);
-  delay(delayBetweenOnOff);
-  MIDI.sendControlChange(ccNo, 127, channel);
-  delay(delayBetweenOnOff);
-  MIDI.sendControlChange(ccNo, 0, channel);
-  delay(delayBetweenOnOff);
-
-  MIDI.sendControlChange(ccNo, 127, channel);
-  delay(delayBetweenOnOff);
-  MIDI.sendControlChange(ccNo, 127, channel);
-  delay(delayBetweenOnOff);
-  MIDI.sendControlChange(ccNo, 127, channel);
-  delay(delayBetweenOnOff);
-  MIDI.sendControlChange(ccNo, 0, channel);
-  delay(delayBetweenOnOff);
-
-  Serial.print("Sent CC");
-  Serial.println(ccNo);
 }
 
 int readFootSwitch(int row){
@@ -103,12 +82,12 @@ int readFootSwitch(int row){
 
 int CCFromSwitch(int switchNo, int row){
   switch(switchNo){
-    case 21:
+    case 21: //Wiredly the two boards (upper and lower are wired slightly differently - assume its related to how the original firmware worked - so button 1 can be on one of two pins)
     case 23:
       return (10 * row) + 1;
     case 14:
       return (10 * row) + 2;
-    case 22:
+    case 22: //Wiredly the two boards (upper and lower are wired slightly differently - assume its related to how the original firmware worked - so button 3 can be on one of two pins)
     case 24:
       return (10 * row) + 3;
     case 13:
