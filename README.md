@@ -19,6 +19,7 @@ Here I will document my findings along with circuit diagrams and arduino sketch 
 9. Add Ethernet shield and a web configuration UI
 
 # Hardware Choice
-I went with the Arduino Mega 2560 (well actually a clone but its all compatible) as the connection of the two switch boards requires 6 digital pins each (12 in total). In addition to this the Mega has multiple serial connections so the MIDI can run on serial 2 and debug statements can still be sent to serial 1 (default) and viewed in the IDE.
+
+I went with the Arduino Mega 2560 R3 (well actually a clone but its all compatible) as the connection of the each switch board requires 6 digital pins (12 in total) and a Arduino UNO R3 only has 14, 2 of which are needed for the MIDI serial communication. Although "technically" this would be enough it leaves no room for additional outputs (e.g. LED indicators). The Mega 2560 has 54 digital pins for only a few Euro more and there is plenty of space inside the pedal casing for the additional board size. In addition to this the Mega has multiple serial connections so the MIDI can be connected to the serial 2 pins and debug statements can still be sent to serial 1 (default) and viewed in the IDE - this makes/made development so much easier.
 
 https://store.arduino.cc/products/arduino-mega-2560-rev3
