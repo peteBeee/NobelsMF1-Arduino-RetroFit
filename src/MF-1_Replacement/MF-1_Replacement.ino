@@ -5,9 +5,32 @@ MIDI_CREATE_INSTANCE(HardwareSerial, SERIAL_PORT_HARDWARE1, MIDI)
 const int switchPins[2][6] = {
  {26,28,30,32,34,36},
  {42,44,46,48,50,52}
-};
+ };
+const int characters[17][7] = {
+ {1,1,1,1,1,1,0},//0
+ {0,1,1,0,0,0,0},//1
+ {1,1,0,1,1,0,1},//2
+ {1,1,1,1,0,0,1},//3
+ {0,1,1,0,0,1,1},//4
+ {1,0,1,1,0,1,1},//5
+ {1,0,1,1,1,1,1},//6
+ {1,1,1,0,0,0,0},//7
+ {1,1,1,1,1,1,1},//8
+ {1,1,1,1,0,1,1},//9
+ {1,0,0,1,1,1,0},//10 - C
+ {0,0,0,0,0,0,1},//11 - '-'
+ {0,0,0,0,0,0,0},//12 - blank
+ {0,0,0,0,0,1,1},//13 - top left
+ {0,1,0,0,0,0,1},//14 - top right
+ {0,0,0,0,1,0,1},//15 - bottom left
+ {0,0,1,0,0,0,1},//16 - bottom right
 
-volatile int lastCCSent;
+ };
+const int segmentPins[7] = {47,49,41,53,43,45,51};
+const int digitPins[3] = {31,33,35};
+const int dotPin = 37;
+
+volatile int lastCCSent = 0;
 
 void setup() {
   MIDI.begin(MIDI_CHANNEL_OFF);
@@ -15,12 +38,21 @@ void setup() {
 
   initSwitchPins(1);
   initSwitchPins(2);
+  initDisplayPins();
+  digitalWrite(dotPin, HIGH);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   int switchNo;
   int ccNo = 0;
+
+  if(lastCCSent > 0){
+    display(10, (lastCCSent / 10), (lastCCSent % 10), false);
+  }
+  else{
+    display(12,12,12,false);
+  }
 
   switchNo = readFootSwitch(1);
   if(switchNo == 0){
@@ -52,6 +84,16 @@ void initSwitchPins(int row){
    for(int i = 2; i<=6; i++){
      pinMode(switchPins[row - 1][i], OUTPUT);
    }
+}
+
+void initDisplayPins(){
+  for(int pin = 0; pin < 8; pin++){
+    pinMode(segmentPins[pin], OUTPUT);
+  }
+  for(int pin = 0; pin < 3; pin++){
+    pinMode(digitPins[pin], OUTPUT);
+  }
+  pinMode(dotPin, OUTPUT);
 }
 
 int readFootSwitch(int row){
@@ -99,5 +141,29 @@ int CCFromSwitch(int switchNo, int row){
     default:
       return 0;
   }
+}
+
+void display(int h, int t, int u, bool showLeadingZeros){
+if(h == 0 && !showLeadingZeros) h = 12;
+if(h == 0 && t == 0 && !showLeadingZeros) t = 12;
+
+int digits[] = {h,t,u};
+for(int digit = 0; digit < 3; digit++){
+  digitalWrite(digitPins[0], LOW);
+  digitalWrite(digitPins[1], LOW);
+  digitalWrite(digitPins[2], LOW);
+
+
+  for(int segment = 0; segment < 8; segment++){
+    digitalWrite(segmentPins[segment], characters[digits[digit]][segment] == 0 ? LOW : HIGH);
+  }
+
+  digitalWrite(digitPins[0], digit == 0 ? HIGH : LOW);
+  digitalWrite(digitPins[1], digit == 1 ? HIGH : LOW);
+  digitalWrite(digitPins[2], digit == 2 ? HIGH : LOW);
+
+  delay(5);
+}
+
 }
 
